@@ -5,8 +5,8 @@ pod 'Forgeries'
 
 target 'BootstrapTests' do
   # Waiting on 9.3 support to be released
-  pod 'Quick', git: 'https://github.com/Quick/Quick.git'
-  pod 'Nimble', git: 'https://github.com/Quick/Nimble.git'
+  pod 'Quick', :git => 'https://github.com/Quick/Quick.git', :branch => 'swift-3.0'
+  pod 'Nimble', :git => 'https://github.com/Quick/Nimble.git', :branch => 'swift-3.0'
 
   pod 'Nimble-Snapshots', :path => "../"
 end

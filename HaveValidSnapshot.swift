@@ -41,8 +41,8 @@ extension UIView : Snapshotable {
         sharedInstance.referenceImagesDirectory = directory
     }
 
-    class func compareSnapshot(instance: Snapshotable, isDeviceAgnostic: Bool=false, usesDrawRect: Bool=false, snapshot: String, record: Bool, referenceDirectory: String, tolerance: CGFloat) -> Bool {
-        let snapshotController: FBSnapshotTestController = FBSnapshotTestController(testName: _testFileName())
+    class func compareSnapshot(instance: Snapshotable, isDeviceAgnostic: Bool = false, usesDrawRect: Bool = false, snapshot: String, record: Bool, referenceDirectory: String, tolerance: CGFloat) -> Bool {
+        let snapshotController: FBSnapshotTestController = FBSnapshotTestController(testName: testFileName())
         snapshotController.isDeviceAgnostic = isDeviceAgnostic
         snapshotController.recordMode = record
         snapshotController.referenceImagesDirectory = referenceDirectory
@@ -98,7 +98,7 @@ func _getDefaultReferenceDirectory(sourceFileName: String) -> String {
     return folderPath + "/ReferenceImages"
 }
 
-func _testFileName() -> String {
+private func testFileName() -> String {
     let name = FBSnapshotTest.sharedInstance.currentExampleMetadata!.example.callsite.file as NSString
     let type = ".\(name.pathExtension)"
     let sanitizedName = name.lastPathComponent.replacingOccurrences(of: type, with: "")
@@ -106,12 +106,12 @@ func _testFileName() -> String {
     return sanitizedName
 }
 
-func _sanitizedTestName(name: String?) -> String {
+private func sanitizedTestName(name: String?) -> String {
     let quickExample = FBSnapshotTest.sharedInstance.currentExampleMetadata
     var filename = name ?? quickExample!.example.name
     filename = filename.replacingOccurrences(of: "root example group, ", with: "")
     let characterSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
-    let components = filename.components(separatedBy: characterSet)
+    let components = filename.components(separatedBy: characterSet.inverted)
     return components.joined(separator: "_")
 }
 
@@ -126,11 +126,11 @@ func _clearFailureMessage(failureMessage: FailureMessage) {
     failureMessage.to = ""
 }
 
-func _performSnapshotTest(name: String?, isDeviceAgnostic: Bool=false, usesDrawRect: Bool=false, actualExpression: Expression<Snapshotable>, failureMessage: FailureMessage, tolerance: CGFloat?) -> Bool {
+private func performSnapshotTest(name: String?, isDeviceAgnostic: Bool = false, usesDrawRect: Bool = false, actualExpression: Expression<Snapshotable>, failureMessage: FailureMessage, tolerance: CGFloat?) -> Bool {
     let instance = try! actualExpression.evaluate()!
     let testFileLocation = actualExpression.location.file
     let referenceImageDirectory = _getDefaultReferenceDirectory(sourceFileName: testFileLocation)
-    let snapshotName = _sanitizedTestName(name: name)
+    let snapshotName = sanitizedTestName(name: name)
     let tolerance = tolerance ?? _getTolerance()
 
     let result = FBSnapshotTest.compareSnapshot(instance: instance, isDeviceAgnostic: isDeviceAgnostic, usesDrawRect: usesDrawRect, snapshot: snapshotName, record: false, referenceDirectory: referenceImageDirectory, tolerance: tolerance)
@@ -147,7 +147,7 @@ func _recordSnapshot(name: String?, isDeviceAgnostic: Bool=false, usesDrawRect: 
     let instance = try! actualExpression.evaluate()!
     let testFileLocation = actualExpression.location.file
     let referenceImageDirectory = _getDefaultReferenceDirectory(sourceFileName: testFileLocation)
-    let snapshotName = _sanitizedTestName(name: name)
+    let snapshotName = sanitizedTestName(name: name)
     let tolerance = _getTolerance()
     
     _clearFailureMessage(failureMessage: failureMessage)
@@ -163,13 +163,13 @@ func _recordSnapshot(name: String?, isDeviceAgnostic: Bool=false, usesDrawRect: 
 
 internal var switchChecksWithRecords = false
 
-public func haveValidSnapshot(named name: String? = nil, usesDrawRect: Bool=false, tolerance: CGFloat? = nil) -> MatcherFunc<Snapshotable> {
+public func haveValidSnapshot(named name: String? = nil, usesDrawRect: Bool = false, tolerance: CGFloat? = nil) -> MatcherFunc<Snapshotable> {
     return MatcherFunc { actualExpression, failureMessage in
         if (switchChecksWithRecords) {
             return _recordSnapshot(name: name, usesDrawRect: usesDrawRect, actualExpression: actualExpression, failureMessage: failureMessage)
         }
 
-        return _performSnapshotTest(name: name, usesDrawRect: usesDrawRect, actualExpression: actualExpression, failureMessage: failureMessage, tolerance: tolerance)
+        return performSnapshotTest(name: name, usesDrawRect: usesDrawRect, actualExpression: actualExpression, failureMessage: failureMessage, tolerance: tolerance)
     }
 }
 
@@ -179,7 +179,7 @@ public func haveValidDeviceAgnosticSnapshot(named name: String?=nil, usesDrawRec
             return _recordSnapshot(name: name, isDeviceAgnostic: true, usesDrawRect: usesDrawRect, actualExpression: actualExpression, failureMessage: failureMessage)
         }
 
-        return _performSnapshotTest(name: name, isDeviceAgnostic: true, usesDrawRect: usesDrawRect, actualExpression: actualExpression, failureMessage: failureMessage, tolerance: tolerance)
+        return performSnapshotTest(name: name, isDeviceAgnostic: true, usesDrawRect: usesDrawRect, actualExpression: actualExpression, failureMessage: failureMessage, tolerance: tolerance)
     }
 }
 

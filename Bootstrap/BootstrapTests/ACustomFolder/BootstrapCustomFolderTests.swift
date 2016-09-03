@@ -8,9 +8,9 @@ class BootstrapCustomFormatTests: QuickSpec {
             var view: UIView!
 
             beforeEach {
-                setNimbleTestFolder("CustomFolder")
-                view = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: 44, height: 44)))
-                view.backgroundColor = UIColor.blueColor()
+                setNimbleTestFolder(testFolder: "CustomFolder")
+                view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 44, height: 44)))
+                view.backgroundColor = UIColor.blue
             }
 
             it("fails to find the snapshots due to the custom folder") {
@@ -20,7 +20,7 @@ class BootstrapCustomFormatTests: QuickSpec {
             it("finds the snapshots using a custom images directory") {
                 expect(view).to(haveValidSnapshot())
             }
-          
+
             it("finds device agnostic snapshots with custom images directory") {
                 expect(view).to(haveValidDeviceAgnosticSnapshot())
             }

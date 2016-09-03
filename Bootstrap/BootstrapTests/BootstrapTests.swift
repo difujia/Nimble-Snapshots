@@ -8,10 +8,10 @@ class BootstrapTests: QuickSpec {
             var view: UIView!
 
             beforeEach {
-                setNimbleTolerance(0)
-                setNimbleTestFolder("tests")
-                view = UIView(frame: CGRect(origin: CGPointZero, size: CGSize(width: 44, height: 44)))
-                view.backgroundColor = UIColor.blueColor()
+                setNimbleTolerance(tolerance: 0)
+                setNimbleTestFolder(testFolder: "tests")
+                view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 44, height: 44)))
+                view.backgroundColor = UIColor.blue
             }
 
             it("has a valid snapshot") {
@@ -20,7 +20,7 @@ class BootstrapTests: QuickSpec {
             }
 
             it("has a valid pretty-syntax snapshot") {
-                expect(view) == snapshot("something custom")
+                expect(view) == snapshot(name: "something custom")
             }
 
             it("has a valid pretty-synxtax snapshot with emoji") {
@@ -43,8 +43,8 @@ class BootstrapTests: QuickSpec {
             // If this is not using drawRect it will fail
 
             it("has a valid snapshot when draw rect is turned on ") {
-                UIButton.appearance().tintColor = UIColor.redColor()
-                let imageView = UIButton(type: .ContactAdd)
+                UIButton.appearance().tintColor = UIColor.red
+                let imageView = UIButton(type: .contactAdd)
 
                 // expect(imageView).to( recordSnapshot(usesDrawRect: true) )
                 expect(imageView).to( haveValidSnapshot(usesDrawRect: true) )
@@ -58,7 +58,7 @@ class BootstrapTests: QuickSpec {
 
             it("respects tolerance") {
                 // Image for this test has 0.5pt column (of 44pt) that is wrong.
-                setNimbleTolerance(1)
+                setNimbleTolerance(tolerance: 1)
                 expect(view) == snapshot()
             }
         })
