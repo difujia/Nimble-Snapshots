@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/ashfurrow/Nimble-Snapshots.git", :tag => s.version }
   s.source_files  = "HaveValidSnapshot.swift", "PrettySyntax.swift", "NimbleSnapshotsConfiguration.swift"
   s.frameworks  = "Foundation", "XCTest"
-  s.dependency "FBSnapshotTestCase", "~> 2.0"
+  s.dependency "FBSnapshotTestCase", :git => 'https://github.com/facebook/ios-snapshot-test-case.git', :branch => 'swift-beta-3'
   s.dependency "Nimble"
   s.dependency "Quick"
 end
